@@ -1,57 +1,50 @@
-package com.test.forumapp.presentation.routes
+package com.test.forumapp.presentation.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.test.forumapp.presentation.screen.DetailScreen
 import com.test.forumapp.presentation.screen.HomeScreen
 import com.test.forumapp.presentation.screen.LoginScreen
 
 @Composable
-fun AppNavHost(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    startDestination: String = "login",
-) {
+fun NavigationWrapper() {
+    val navController = rememberNavController()
     NavHost(
-        modifier = modifier,
         navController = navController,
-        startDestination = startDestination
+        startDestination = Login,
     ) {
-        composable(
-            "login",
+        composable<Login>(
             enterTransition = ::slideInToLeft,
             exitTransition = ::slideOutToLeft,
             popEnterTransition = ::slideInToRight,
             popExitTransition = ::slideOutToRight
         ) {
-            LoginScreen(navController = navController)
+            LoginScreen { navController.navigate(Home) }
         }
-        composable(
-            "home",
+        composable<Home>(
             enterTransition = ::slideInToLeft,
             exitTransition = ::slideOutToLeft,
             popEnterTransition = ::slideInToRight,
             popExitTransition = ::slideOutToRight
         ) {
-            HomeScreen(navController = navController)
+            HomeScreen { postId -> navController.navigate(Detail(postId)) }
         }
-        composable(
-            "detail/{postId}",
+        composable<Detail>(
             enterTransition = ::slideInToLeft,
             exitTransition = ::slideOutToLeft,
             popEnterTransition = ::slideInToRight,
             popExitTransition = ::slideOutToRight
         ) { backStackEntry ->
-            val postId = backStackEntry.arguments?.getString("postId")
-            DetailScreen(navController = navController, postId = postId)
+            val detail = backStackEntry.toRoute<Detail>()
+            DetailScreen(detail.postId, navigatesToHome = { navController.popBackStack() })
         }
     }
 }
