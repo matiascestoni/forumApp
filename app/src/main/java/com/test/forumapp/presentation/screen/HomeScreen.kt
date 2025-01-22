@@ -1,28 +1,19 @@
 package com.test.forumapp.presentation.screen
 
-import android.util.Log
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.test.forumapp.presentation.model.HomeUIState
 import com.test.forumapp.presentation.model.Post
 import com.test.forumapp.presentation.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(navigateToDetail: (String) -> Unit, viewModel: HomeViewModel) {
-    val homeUIState by viewModel.homeUIState.collectAsState()
-    /*
-    LaunchedEffect(key1 = true) {
-        Log.d("ZZZ", "LaunchedEffect")
-        viewModel.init()
-    }
-
-     */
+    val homeUIState by viewModel.homeUIState.collectAsStateWithLifecycle()
 
     when (homeUIState) {
         is HomeUIState.Idle -> {}
